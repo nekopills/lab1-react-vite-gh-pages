@@ -40,7 +40,7 @@
           - name: Checkout code
             uses: actions/checkout@v4
 
-            name: Set remote URL with token
+          - name: Set remote URL with token
             run: git remote set-url origin https://$GITHUB_TOKEN@github.com/nekopills/lab1-react-vite-gh-pages.git
           
           - name: Set up Node.js
