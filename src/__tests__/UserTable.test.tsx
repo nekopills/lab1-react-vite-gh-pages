@@ -1,12 +1,11 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 import UserTable from '../components/UserTable'
 import '@testing-library/jest-dom';
-// Подключите типы jest
-/// <reference types="jest" />
 
-// Установим глобальный fetch перед тестами
+declare var global: any;
+
 beforeAll(() => {
-(globalThis as any).fetch = jest.fn();
+(global as any).fetch = jest.fn();
 });
 
 beforeEach(() => {
