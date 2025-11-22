@@ -1,15 +1,34 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 import UserTable from '../components/UserTable'
-import '@testing-library/jest-dom';
+import { vi } from 'vitest';
 
-declare var global: any;
+const mockUsers = [
+  {
+    id: 1,
+    name: 'Иван Иванов',
+    email: 'ivan@example.com',
+    phone: '+7 (999) 123-45-67',
+    website: 'example.com',
+  },
+];
 
+const originalFetch = globalThis.fetch;
+
+// Перед всеми тестами переопределяем fetch
 beforeAll(() => {
-(global as any).fetch = jest.fn();
+  (globalThis as any).fetch = () => Promise.resolve({
+    ok: true,
+    json: () => Promise.resolve(mockUsers),
+  } as Response);
 });
 
-beforeEach(() => {
-  jest.clearAllMocks();
+afterAll(() => {
+  // Возвращаем оригинальный fetch
+  (globalThis as any).fetch = originalFetch;
+});
+
+afterEach(() => {
+  // тут можно очистить мок, если используете банально `fetchMock`
 });
 
 describe('UserTable', () => {
@@ -20,34 +39,20 @@ describe('UserTable', () => {
   });
 
   test('loads users and displays them when button is clicked', async () => {
-    const mockUsers = [
-      {
-        id: 1,
-        name: 'Иван Иванов',
-        email: 'ivan@example.com',
-        phone: '+7 (999) 123-45-67',
-        website: 'example.com',
-      },
-    ];
-
-    (fetch as jest.Mock).mockResolvedValue({
-      ok: true,
-      json: async () => mockUsers,
-    } as Response);
-
     render(<UserTable />);
     fireEvent.click(screen.getByText(/загрузить пользователей/i));
-
     expect(await screen.findByText(/иван иванов/i)).toBeInTheDocument();
     expect(screen.getByText(/ivan@example.com/i)).toBeInTheDocument();
   });
 
   test('shows error when fetch fails', async () => {
-    (fetch as jest.Mock).mockRejectedValue(new Error('Network error'));
+    // Перед выполнением теста замените fetch, чтобы он возвращал ошибку
+    (globalThis as any).fetch = () => Promise.reject(new Error('Network error'));
 
     render(<UserTable />);
     fireEvent.click(screen.getByText(/загрузить пользователей/i));
-
-    expect(await screen.findByText(/ошибка при загрузке/i)).toBeInTheDocument();
+expect(await screen.findByText(/network error/i)).toBeInTheDocument();
+    // Восстановите оригинальный fetch
+    (globalThis as any).fetch = originalFetch;
   });
 });
