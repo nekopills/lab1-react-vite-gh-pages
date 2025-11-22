@@ -19,6 +19,7 @@
         "@testing-library/jest-dom": "^6.9.1",
         "@testing-library/react": "^16.3.0",
         "@testing-library/user-event": "^14.6.1",
+        "@types/jest": "^30.0.0",
         "@types/node": "^24.10.1",
         "@types/react": "^19.2.5",
         "@types/react-dom": "^19.2.3",
@@ -32,7 +33,10 @@
         "jsdom": "^27.2.0",
         "typescript": "~5.9.3",
         "typescript-eslint": "^8.46.4",
-        "vite": "npm:rolldown-vite@7.2.5",
+        "vite": "^7.2.5",
         "vitest": "^4.0.13"
+    },
+    "overrides": {
+        "vite": "^7.2.5"
     }
 }
