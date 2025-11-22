@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 import UserTable from '../components/UserTable'
-import { vi } from 'vitest';
+//import { vi } from 'vitest';
 
 const mockUsers = [
   {
@@ -14,7 +14,6 @@ const mockUsers = [
 
 const originalFetch = globalThis.fetch;
 
-// Перед всеми тестами переопределяем fetch
 beforeAll(() => {
   (globalThis as any).fetch = () => Promise.resolve({
     ok: true,
@@ -23,12 +22,7 @@ beforeAll(() => {
 });
 
 afterAll(() => {
-  // Возвращаем оригинальный fetch
   (globalThis as any).fetch = originalFetch;
-});
-
-afterEach(() => {
-  // тут можно очистить мок, если используете банально `fetchMock`
 });
 
 describe('UserTable', () => {
@@ -46,13 +40,11 @@ describe('UserTable', () => {
   });
 
   test('shows error when fetch fails', async () => {
-    // Перед выполнением теста замените fetch, чтобы он возвращал ошибку
     (globalThis as any).fetch = () => Promise.reject(new Error('Network error'));
 
     render(<UserTable />);
     fireEvent.click(screen.getByText(/загрузить пользователей/i));
 expect(await screen.findByText(/network error/i)).toBeInTheDocument();
-    // Восстановите оригинальный fetch
     (globalThis as any).fetch = originalFetch;
   });
 });
